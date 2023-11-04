@@ -7,7 +7,7 @@
   "browser_specific_settings": {
     "gecko": {
       "id": "{647e17b8-3376-4eb3-bdbc-50724b1e728a}",
-      "strict_min_version": "115.*"
+      "strict_min_version": "115.0a1"
     }
   },
   "background": {
@@ -17,16 +17,10 @@
   },
   "experiment_apis": {
     "HideAllMailDuplicates": {
-      "schema": "api/HideAllMailDuplicates/schema.json",
+      "schema": "schema.json",
       "parent": {
-        "scopes": [
-          "addon_parent"
-        ],
-        "paths": [
-          [
-            "HideAllMailDuplicates"
-          ]
-        ],
+        "scopes": ["addon_parent"],
+        "paths": [["HideAllMailDuplicates"]],
         "script": "api/HideAllMailDuplicates/implementation.js"
       }
     }
