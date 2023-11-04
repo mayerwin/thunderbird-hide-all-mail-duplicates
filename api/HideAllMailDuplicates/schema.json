@@ -1,0 +1,20 @@
+[
+  {
+    "namespace": "HideAllMailDuplicates",
+    "functions": [
+      {
+        "name": "hide",
+        "type": "function",
+        "description": "Hide All Mail Duplicates",
+        "async": true,
+        "parameters": [
+          {
+            "name": "name",
+            "type": "string",
+            "description": "Sample argument"
+          }
+        ]
+      }
+    ]
+  }
+]
