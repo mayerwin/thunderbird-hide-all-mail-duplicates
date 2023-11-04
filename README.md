@@ -17,4 +17,4 @@ Simply download the [latest release](https://github.com/mayerwin/thunderbird-hid
 The add-on currently only supports Gmail configured to use English as the display language (as the 'All Mail' folder is named accordingly). But it is easy to add support for other languages (just submit an issue mentioning the name of your 'All Mail' folder, or submit a pull request).
 
 ## Roadmap
-See the [this page](https://github.com/mayerwin/thunderbird-hide-all-mail-duplicates/wiki) for more details about possible improvements.
+See [this page](https://github.com/mayerwin/thunderbird-hide-all-mail-duplicates/wiki) for more details about possible improvements.
