@@ -12,3 +12,9 @@ This add-on solves this issue by hiding the email from 'All Mail' if a duplicate
 
 ## How to install
 Simply download the [latest release](https://github.com/mayerwin/thunderbird-hide-all-mail-duplicates/releases), and install the xpi file as per the official instructions [here](https://support.mozilla.org/en-US/kb/installing-addon-thunderbird#w_a-slightly-less-ideal-case-install-from-a-downloaded-xpi-file).
+
+## Requirements
+The add-on currently only supports Gmail configured to use English as the display language (as the 'All Mail' folder is named accordingly). But it is easy to add support for other languages (just submit an issue mentioning the name of your 'All Mail' folder, or submit a pull request).
+
+## Roadmap
+See [this page](https://github.com/mayerwin/thunderbird-hide-all-mail-duplicates/wiki) for more details about possible improvements.
