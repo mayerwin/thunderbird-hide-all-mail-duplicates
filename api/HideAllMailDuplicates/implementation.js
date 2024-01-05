@@ -35,41 +35,55 @@
 					hide: async function (name) {
 						var {GlodaSyntheticView} = ChromeUtils.import("resource:///modules/gloda/GlodaSyntheticView.jsm");
 
-						// Store the original method.
-						if (typeof GlodaSyntheticView.prototype.originalReportResultsGlobal88319 === 'undefined') {
-							console.log("Saving original method"); 
-							GlodaSyntheticView.prototype.originalReportResultsGlobal88319 = GlodaSyntheticView.prototype.reportResults;
-						}
-
 						// Define a new reportResults function
 						GlodaSyntheticView.prototype.reportResults = function(aItems) {
-							try {
-								// Filter out duplicate messages from aItems before calling the original function
-								const filteredItems = aItems.filter(item => {
-									const hdr = item.folderMessage;
-									if (hdr) {
-										// Determine if an item is a duplicate
-										//console.log("Email13: " + hdr.messageId + " in " + hdr.folder.name);
-										if (hdr.folder.name === "All Mail") {
-											// Check the rest of aItems for a message with the same messageId but a different folder
-											const duplicateItem  = aItems.find(otherItem => {
-												const otherHdr = otherItem.folderMessage;
-												return otherHdr &&
-													   otherHdr.messageId === hdr.messageId &&
-													   otherHdr.folder.name !== "All Mail";
-											});
-											// If it's a duplicate, filter it out by returning false, but make sure to update selectedMessage if necessary.
-											if (duplicateItem && hdr.messageId === this.selectedMessage.messageId) {
-												this.selectedMessage = duplicateItem.folderMessage;
-											}
-											return !duplicateItem ;
-										}
-									}
-									return true;
-								});
+							try {									
+								let messageMap = new Map();
 
-								// Call the original reportResults function with the filtered list of items
-								GlodaSyntheticView.prototype.originalReportResultsGlobal88319.call(this, filteredItems);
+								// First pass: Store messages in a map with messageId as the key.
+								for (let item of aItems) {
+								  let hdr = item.folderMessage;
+								  if (hdr) {
+									if (!messageMap.has(hdr.messageId)) {
+									  messageMap.set(hdr.messageId, []);
+									}
+									if (hdr.folder.name === "All Mail") { //hdr.folder.flags & Ci.nsMsgFolderFlags.AllMail) {
+									  // Push the header to the end of the array.
+									  messageMap.get(hdr.messageId).push(hdr);
+									} else {
+									  // Add the header to the front of the array.
+									  messageMap.get(hdr.messageId).unshift(hdr);
+									}
+								  }
+								}
+
+								// Second pass: Traverse the map, report everything except duplicates
+								// from "All Mail".
+								// The map values are arrays of headers, with the ones not in "All Mail"
+								// at the front.
+								for (let value of messageMap.values()) {
+								  if (value.length == 1) {
+									let hdr = value[0];
+									this.searchListener.onSearchHit(hdr, hdr.folder);
+								  } else if (value[0].folder.name === "All Mail") { //value[0].folder.flags & Ci.nsMsgFolderFlags.AllMail) {
+									// First hit is in "All Mail" already, so report all hits.
+									for (let hdr of value) {
+									  this.searchListener.onSearchHit(hdr, hdr.folder);
+									}
+								  } else {
+									// First hit isn't in "All Mail", so report all hits not in "All Mail".
+									for (let hdr of value) {
+									  if (hdr.folder.name === "All Mail") { //hdr.folder.flags & Ci.nsMsgFolderFlags.AllMail) {
+										// Make sure `this.selectedMessage` references a message we're reporting.
+										if (this.selectedMessage.messageId == hdr.messageId) {
+										  this.selectedMessage = value[0];
+										}
+										break;
+									  }
+									  this.searchListener.onSearchHit(hdr, hdr.folder);
+									}
+								  }
+								}
 							} catch (e) {
 								console.error('An error occurred while filtering items:', e);
 								return true;
