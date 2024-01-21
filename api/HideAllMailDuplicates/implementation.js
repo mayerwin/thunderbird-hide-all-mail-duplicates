@@ -35,6 +35,12 @@
 					hide: async function (name) {
 						var {GlodaSyntheticView} = ChromeUtils.import("resource:///modules/gloda/GlodaSyntheticView.jsm");
 
+						// Store the original method.
+						if (typeof GlodaSyntheticView.prototype.originalReportResultsGlobal88319 === 'undefined') {
+							console.log("Saving original method"); 
+							GlodaSyntheticView.prototype.originalReportResultsGlobal88319 = GlodaSyntheticView.prototype.reportResults;
+						}
+						
 						// Define a new reportResults function
 						GlodaSyntheticView.prototype.reportResults = function(aItems) {
 							try {									
@@ -97,6 +103,11 @@
 		}
 
 		onShutdown(isAppShutdown) {
+			// Restore the original method.
+			if (typeof GlodaSyntheticView.prototype.originalReportResultsGlobal88319 !== 'undefined') {
+				console.log("Restoring original method"); 
+				GlodaSyntheticView.prototype.reportResults = GlodaSyntheticView.prototype.originalReportResultsGlobal88319;
+			}
 			// This function is called if the extension is disabled or removed, or Thunderbird closes.
 			// We usually do not have to do any cleanup, if Thunderbird is shutting down entirely
 			if (isAppShutdown) {
